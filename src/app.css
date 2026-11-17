@@ -1,0 +1,7 @@
+/* 本人「フォントは全部 Noto Sans JP にしてね」: Astryx の書体トークンを上書き（読み込みは index.html の Google Fonts）。 */
+:root,
+[data-astryx-theme][data-astryx-theme] {
+  --font-family-body: "Noto Sans JP", sans-serif;
+  --font-family-heading: "Noto Sans JP", sans-serif;
+  --font-family-code: "Noto Sans JP", sans-serif;
+}

@@ -1,0 +1,74 @@
+/* メンバー詳細（台紙 can）で Astryx の既定から変える所だけ書く。値はすべてトークン。 */
+
+/* 表はカードの余白の内側に収める（台紙 can のとおり、罫線は見出しの左端から右端まで、見出しと表の間も空ける）。
+   Astryx の Table はカードの余白と同じだけ外へはみ出す作りで、カードの余白を 24 にしたとき見出しに 12 重なったため、
+   上司ホームの表（.mh-table）と同じく、はみ出す量を 0 にして止める */
+.am-table {
+  --container-padding-inline-start: 0px;
+  --container-padding-inline-end: 0px;
+  --container-padding-block-start: 0px;
+  --container-padding-block-end: 0px;
+}
+.am-table th:first-child,
+.am-table td:first-child {
+  padding-inline-start: 0;
+}
+.am-table th:last-child,
+.am-table td:last-child {
+  padding-inline-end: 0;
+}
+
+/* 表の見出しの文字は台紙の Head（text-secondary・小さい文字）。Astryx の既定の 14px・600 より薄く小さくし、
+   上司ホームと山田 拓也さんの画面の表（.mh-table・.mg-table）と同じ 12px・medium にそろえる */
+.am-table thead th {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+}
+
+/* 業績目標の「実績」「取り組み」の行の間。Astryx の既定は行の最小の高さ 24px＋行の間 8px で 1 行 34px になり、
+   台紙 can（約 24px）より縦に長い。最小の高さを外して文字の行の高さ（20px）にし、行の間を 4px にして 1 行 24px にそろえる */
+.am-goal-meta dl {
+  row-gap: var(--spacing-1);
+}
+.am-goal-meta dt,
+.am-goal-meta dd {
+  min-height: 0;
+}
+
+/* 表の幅が 480px 未満（375px の画面のカードなど）では、上司ホーム・山田 拓也さんの画面と同じく「見出し: 値」の形に積む
+   （manager.css の @container mg-table と .mg-stack。Fable 10回目 V1。375px で直近の課題・面談履歴の表が横に送られ、期限・面談・進捗・要約が画面の外に出ていた） */
+.am-table {
+  container: mg-table / inline-size;
+}
+@container mg-table (width < 480px) {
+  /* 面談履歴の右端の「開く」の印は、積んだ行の右上に置き、見出しは付けない */
+  .am-talks.mg-stack tbody tr {
+    position: relative;
+    padding-inline-end: var(--spacing-6);
+  }
+  .am-talks.mg-stack tbody td:last-child {
+    position: absolute;
+    inset-block-start: var(--spacing-3);
+    inset-inline-end: 0;
+    padding: 0;
+  }
+  .am-talks.mg-stack tbody td:last-child::before {
+    content: none;
+  }
+}
+
+/* 業績目標の右の「◯/◯の面談で見直し」は、狭い幅（768px 未満）では文の下に回す
+   （375px で札が右に残り、実績・取り組みが1行3〜5文字に折れていた。Fable 10回目 V1。ホームの停滞の行 .ah-stalled-item と同じ幅で切り替える） */
+@media (width < 768px) {
+  .am-goal-row.am-goal-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--spacing-2);
+  }
+  /* Astryx は行の右端の物を margin-inline-start: auto で右に寄せるので、0 に戻して文の左端にそろえる */
+  .am-goal-row.am-goal-row > :last-child:not(:first-child) {
+    justify-self: start;
+    margin-inline-start: 0;
+  }
+}

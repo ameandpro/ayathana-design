@@ -1,0 +1,84 @@
+/* Ayatana の全画面で使うサイドバーの見た目（manager.css から移した）。色・余白・角丸・文字はテーマのトークンだけ。 */
+
+/* ---------- サイドバーの幅 ---------- */
+
+/* Astryx の SideNav は既定 260px でトークンが無いため、幅だけ台紙（DESIGN.md「サイドバー幅は 240px」）の値を当てる。
+   狭い画面の引き出し（dialog）にも mg-sidenav が付くが、そちらは Astryx の引き出しの幅のままにする（240px にすると中身の 320px が左で切れる）ので、nav にだけ当てる */
+nav.astryx-side-nav.mg-sidenav {
+  width: 240px;
+}
+
+/* ---------- サイドバーのタブ（台紙の Nav Tabs: 灰色の地に、選んだ方が白い） ---------- */
+
+.mg-tabs {
+  padding: 2px;
+  background: var(--color-neutral);
+  border-radius: var(--radius-element);
+}
+/* 選んだタブ: 白い地と、地の色に頼らない細い枠（線の形で見分けられる）。
+   タブの大きさは変えない（padding・border・font-weight に触らない）ので、枠は疑似要素の border で描く。
+   影や地の色で描くと強制カラー（Windows のハイコントラスト）で消えるため
+   （ガイド tabs「Draw the underline with a border on a pseudo-element. DO NOT use `box-shadow` or a background」）。
+   Astryx のタブは position: relative を持っている。 */
+.mg-tabs [role='tab'][aria-selected='true'] {
+  background: var(--color-background-card);
+}
+.mg-tabs [role='tab'][aria-selected='true']::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--color-border);
+  border-radius: inherit;
+  pointer-events: none;
+}
+/* 選んでいないタブの文字: 台紙の Tab Label は medium（Astryx の既定は regular）。
+   選んだときの幅は Astryx が隠れた semibold の写しで先に取っているので、太さを変えても幅は動かない */
+.mg-tabs [role='tab'][aria-selected='false'] {
+  font-weight: var(--font-weight-medium);
+}
+/* Astryx の下線は台紙に無いので見せない（地の色で描かれていて、強制カラーでは消える） */
+.mg-tabs .astryx-tab-indicator {
+  opacity: 0;
+}
+
+/* ---------- サイドバーの項目: このページを含む区画（台紙 tug の Home Row。地 neutral・文字とアイコンは主の色） ---------- */
+/* このページそのものではないので aria-current="page" は付けず、見た目だけ Astryx の選択中と揃える */
+.mg-nav-section {
+  background: var(--color-neutral);
+}
+/* 台紙ではこのページの項目も区画の項目も文字が semibold（Home Row Label・Next Actions Chat Row Label の fw:semibold） */
+.mg-nav-current,
+.mg-nav-current *,
+.mg-nav-section,
+.mg-nav-section * {
+  font-weight: var(--font-weight-semibold);
+}
+.mg-nav-section svg {
+  color: var(--color-text-primary);
+}
+/* 選んでいない項目の文字: 台紙の Row Label は secondary・medium（Astryx の既定は主の色・regular）。アイコンは既に icon-secondary */
+.mg-sidenav .astryx-side-nav-item:not(.mg-nav-current):not(.mg-nav-section) > span {
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+}
+
+/* ---------- 狭い画面の引き出し: 一番下の欄（設定・名前）を下に置く ---------- */
+/* Astryx の引き出しでは、一番下の欄はスクロールする箱（nav）の中身の最後に並ぶだけで、中身が短いと途中で止まる。
+   広い画面の左メニューと同じく一番下に置くため、引き出しの nav だけ縦の flex にして最後の欄を下へ押す。
+   中身が引き出しより長いときは押す余りが無くなり、これまでどおりスクロールする */
+dialog.mg-sidenav nav {
+  display: flex;
+  flex-direction: column;
+}
+dialog.mg-sidenav nav > * {
+  flex-shrink: 0;
+}
+dialog.mg-sidenav nav > :last-child {
+  margin-top: auto;
+}
+
+/* ---------- 区画の見出し（目標管理・評価・面談管理・キャリア） ---------- */
+/* 台紙の Group Heading は medium（Astryx の既定は semibold）。見出しは SideNavSection の title の span（id が -title で終わる） */
+.mg-sidenav .astryx-side-nav-section [id$='-title'] {
+  font-weight: var(--font-weight-medium);
+}

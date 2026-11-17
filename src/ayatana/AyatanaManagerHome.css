@@ -1,0 +1,185 @@
+/* 上司ホーム（Astryx 版）で Astryx に部品が無い所だけ自前で書く。値はすべて Astryx のトークン。
+   折れ線・マス目・内訳の横棒の3つ（Astryx の図表は canary だけで正式版に無い）。 */
+
+/* Table は Card の余白の内側に収める（Astryx の Table はカードの端まで広がる作りのため、カードの余白の値を 0 にして止める）。
+   罫線を中身の列の幅にそろえ、端の列の文字も見出しの左端・右端にそろえる */
+/* 表の幅で積むかを決めるので、囲みを幅の容器にする（縦版の .mg-table と同じ名前。積む指定は manager.css の .mg-stack） */
+.mh-table {
+  container: mg-table / inline-size;
+  --container-padding-inline-start: 0px;
+  --container-padding-inline-end: 0px;
+  --container-padding-block-start: 0px;
+  --container-padding-block-end: 0px;
+}
+.mh-table th:first-child,
+.mh-table td:first-child {
+  padding-inline-start: 0;
+}
+.mh-table th:last-child,
+.mh-table td:last-child {
+  padding-inline-end: 0;
+}
+/* 見出しの文字は台紙 ito の Head（text-secondary・font-size-sm・medium）。Astryx の既定の 14px・600 より薄く小さくする（縦並びの .mg-table と同じ） */
+.mh-table thead th {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+}
+/* 目標の表は人と人のあいだだけに線を引く（同じ人の続きの行の上の線を消す） */
+.mh-goals tbody tr:has(+ tr .mh-person-cont) > td {
+  border-bottom-color: transparent;
+}
+
+/* 未完了と完了の札の列をそろえ、名前の左端を合わせる */
+.mh-action-rows {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: var(--spacing-2);
+  /* 名前が2行に折り返したとき、札は1行目にそろえる */
+  align-items: start;
+  justify-items: start;
+}
+
+/* 満足度のマス目（名前の列はフルネームが1行に収まる 4rem） */
+.mh-heat {
+  display: grid;
+  grid-template-columns: 4rem repeat(8, minmax(0, 1fr));
+  gap: var(--spacing-1);
+  align-items: center;
+}
+.mh-heat-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--spacing-8);
+  border-radius: var(--radius-element);
+  font-size: var(--font-size-sm);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-primary);
+}
+.mh-heat-s1 {
+  background: var(--color-neutral);
+}
+.mh-heat-s2 {
+  background: var(--color-background-gray);
+}
+.mh-heat-s3 {
+  background: var(--color-border-emphasized);
+}
+.mh-heat-s4 {
+  background: var(--color-icon-secondary);
+  color: var(--color-on-accent);
+}
+.mh-heat-low {
+  background: var(--color-error);
+  color: var(--color-on-error);
+  font-weight: var(--font-weight-semibold);
+}
+.mh-heat-head {
+  text-align: center;
+}
+
+/* キャリア希望の反映の頭（数字とアヤの文）の幅は 320。本文が狭い幅（Astryx の区切り lg 1024px より下。ホームの AyatanaHome.css・manager.css と同じ区切り）では、
+   頭を上に、内訳と表を下に積み、どちらも幅いっぱいにする（375px で頭が右に切れ、内訳と表が幅0に潰れていた） */
+.mh-career-head {
+  width: 320px;
+}
+@media (width < 1024px) {
+  .mh-career.mh-career {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .mh-career.mh-career > * {
+    flex: none;
+    width: auto;
+  }
+  .mh-career-head.mh-career-head {
+    width: auto;
+  }
+}
+
+/* キャリアの状態の内訳: 状態ごとの組（見出しの下に名前の帯） */
+.mh-split {
+  display: flex;
+  gap: var(--spacing-3);
+}
+.mh-split-group {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  min-width: 0;
+}
+.mh-split-bar {
+  display: flex;
+  gap: 2px;
+  height: var(--spacing-8);
+}
+.mh-split-seg {
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-element);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+}
+.mh-split-done {
+  background: var(--color-background-green);
+  color: var(--color-text-green);
+}
+/* 未反映の名前の札は赤くしない。状態は上の「未反映 4人」と表のタグ（Badge error）で出す。未確認より濃い灰色 */
+.mh-split-alert {
+  background: var(--color-background-gray);
+}
+.mh-split-open {
+  background: var(--color-background-gray);
+}
+.mh-split-unknown {
+  background: var(--color-background-muted);
+  color: var(--color-text-secondary);
+}
+/* 帯のマスか表の行に触れている人（usePointedPerson）。縦版と同じ印 */
+.mh-split-seg[data-pointed] {
+  /* 線は 1px だけ（DESIGN.md 177行） */
+  outline: 1px solid var(--color-text-primary);
+  outline-offset: -1px;
+}
+.mh-table tbody tr:has([data-pointed]) {
+  background: var(--color-overlay-hover);
+}
+/* 話題の増減は幅をそろえて、回数の右端を縦にそろえる */
+.mh-topic-delta {
+  display: inline-block;
+  min-width: var(--spacing-6);
+  text-align: end;
+}
+/* 広い画面（1024px 以上）では、増減の列を「+12」の札（幅 36.5px）が収まる幅にする。24px だと札がはみ出し、その行だけ回数が左にずれた（Fable 13回目 Y2）。
+   375px は今のまま */
+@media (width >= 1024px) {
+  .mh-topic-delta {
+    min-width: var(--spacing-10);
+  }
+}
+
+/* 本文が狭い幅では、内訳の区分けを縦版（manager.css の .mg-split）と同じく、1マスの幅（64px）が取れないとき区分けごと次の行に送る。
+   375px で区分けの名前と名前の札が「田中 翔／太」と折れていた。マスの数は CareerCard が --mh-seg-count で渡す */
+@media (width < 1024px) {
+  .mh-split {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  .mh-split-group {
+    min-width: auto;
+  }
+  .mh-split-group > :first-child {
+    white-space: nowrap;
+  }
+  .mh-split-bar {
+    min-width: calc(var(--mh-seg-count, 1) * (var(--spacing-12) + var(--spacing-4)) + (var(--mh-seg-count, 1) - 1) * 2px);
+  }
+  .mh-split-seg {
+    min-width: 0;
+    white-space: nowrap;
+  }
+}

@@ -1,0 +1,869 @@
+/* Wonder の上司ホーム（縦に積んだ版）ほか3枚のための見た目。
+   色・余白・角丸・文字はテーマのトークンだけ。形は既存の AyatanaManagerHome.css の mh- を写して mg- にした。 */
+
+/* ---------- アヤの吹き出し ---------- */
+
+.mg-aya {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+}
+.mg-aya-tail {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  height: var(--spacing-6);
+  padding-inline-start: var(--spacing-1);
+  color: var(--color-neutral);
+}
+.mg-aya-tail svg {
+  display: block;
+  width: var(--spacing-2);
+  height: var(--spacing-2);
+}
+.mg-aya-large .mg-aya-tail {
+  height: var(--spacing-10);
+}
+.mg-aya-body {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: var(--spacing-3);
+  background: var(--color-neutral);
+  border-radius: var(--radius-container);
+}
+.mg-aya-large .mg-aya-body {
+  gap: var(--spacing-4);
+  padding: var(--spacing-6);
+}
+/* 狭い画面では大きい吹き出しの内側を詰め、文の幅を取る（375px で1画面近くを取っていた。Fable a562 20） */
+@media (width < 768px) {
+  .mg-aya-large .mg-aya-body {
+    padding: var(--spacing-4);
+  }
+}
+.mg-aya-message {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+}
+.mg-aya-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-1);
+}
+.mg-aya-large .mg-aya-message {
+  gap: var(--spacing-1);
+}
+.mg-aya-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding-block-start: var(--spacing-2);
+}
+.mg-aya-large .mg-aya-actions {
+  padding-block-start: 0;
+}
+/* 「アヤに聞く」: 台紙の Ask Aya Button（地なし・カードと同じ色の 1px の枠）。
+   Astryx に枠だけのボタンが無いので ghost に枠を足す。ボタンは border-box なので高さは変わらない。
+   吹き出しの2つ目からのボタン（.mg-aya-sub）も同じ形にそろえる（Fable 6回目 R1） */
+.mg-ask-aya,
+.mg-aya-sub {
+  border: 1px solid var(--color-border);
+}
+
+/* ---------- カード（左に要約 320、右に中身） ---------- */
+
+.mg-card-split {
+  /* カードの幅で左右の並びと縦積みを切り替える（チャットを開いて本文が狭いときなど） */
+  container: mg-card / inline-size;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--spacing-6);
+}
+.mg-card-split.mg-tight {
+  gap: var(--spacing-4);
+}
+.mg-summary {
+  /* 左右に並ぶときは 320。カードが 320 より狭い（375px の画面など）ときだけ縮めて、はみ出さないようにする */
+  flex: 0 1 320px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  min-width: 0;
+}
+.mg-summary.mg-tight {
+  gap: var(--spacing-2);
+}
+.mg-detail {
+  flex: 1 1 360px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+/* 右に広い表を持つカード（業績目標は約 520px・キャリアは約 424px）だけ、表が要約の横に収まらない幅で要約の下に回す。
+   ほかのカードは台紙どおり横に並べたまま（チャットを開いた台紙 fun でも縦積みはこの2枚だけ） */
+@container mg-card (width < 880px) {
+  .mg-card-wide > .mg-summary,
+  .mg-card-wide > .mg-detail {
+    flex-basis: 100%;
+  }
+}
+/* 表の列が広く要る札（見直し済みの目標）は、幅にかかわらず頭とアヤの文を上に、表を幅いっぱいに置く（台紙 lib・fun） */
+.mg-card-stack > .mg-summary,
+.mg-card-stack > .mg-detail {
+  flex-basis: 100%;
+}
+
+/* ---------- 表（Astryx の Table の左右の端の内側の余白を 0 にする。mh-table と同じ） ---------- */
+
+.mg-table {
+  container: mg-table / inline-size;
+  --container-padding-inline-start: 0px;
+  --container-padding-inline-end: 0px;
+  --container-padding-block-start: 0px;
+  --container-padding-block-end: 0px;
+}
+.mg-table th:first-child,
+.mg-table td:first-child {
+  padding-inline-start: 0;
+}
+.mg-table th:last-child,
+.mg-table td:last-child {
+  padding-inline-end: 0;
+}
+/* 行の高さは台紙の行（py-2）に合わせる: 上下 8。見出しの行は下だけ 8（台紙 pt-0 pb2）。
+   Astryx の compact は上下 4 なので、この表の中だけ上書きする。
+   見出しの文字は台紙の Head（c:text-secondary fs:sm fw:medium）。Astryx の既定の 14px・600 より薄く小さくする */
+.mg-table thead th {
+  padding-block: 0 var(--spacing-2);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+}
+.mg-table tbody td {
+  padding-block: var(--spacing-2);
+}
+/* 同じ人の2行目からは名前を出さず、人と人の間だけに線を引く */
+.mg-goals tbody tr:has(+ tr .mg-person-cont) > td {
+  border-bottom-color: transparent;
+}
+/* 台紙 lib の業績目標は人ごとのまとまり（Person: py-1）。人の最初の行の上と、最後の行の下を 4 足して 12 にする（最後の人の下は足さない）。
+   表の形で見せている幅だけ（縦に積んだときは下で行ごとに組み直す） */
+@container mg-table (width >= 480px) {
+  .mg-goals tbody tr:not(:has(.mg-person-cont)) > td {
+    padding-block-start: var(--spacing-3);
+  }
+  .mg-goals tbody tr:not(:has(+ tr .mg-person-cont)):not(:last-child) > td {
+    padding-block-end: var(--spacing-3);
+  }
+}
+
+/* 表が狭い（375px の画面のカードなど。表の幅 480px 未満）ときは、見出しの行を隠して1行ずつ縦に積み、
+   各セルの前に列の見出しを出す。横に送らなくても読めるようにする
+   （ガイド responsive-table「Use `@container` queries instead of `@media` queries」「the `<thead>` is hidden, and accessible headers are injected into each cell using `::before` pseudo-elements and CSS variables」）。
+   見出しの文字は tableLabels() が --label-1〜 で渡す。横版の表（AyatanaManagerHome の .mh-table）も同じ指定で積む（Fable 9回目 U1。横版 375 で3つの表が横に送られて読めなかった）。表の min-width は Astryx が style 属性で付けるので、ここだけ !important で外す */
+@container mg-table (width < 480px) {
+  .mg-stack :is(table, thead, tbody, tr, td) {
+    display: block;
+  }
+  .mg-stack table {
+    min-width: 0 !important;
+    width: 100%;
+  }
+  .mg-stack thead {
+    display: none;
+  }
+  .mg-stack tbody tr {
+    padding-block: var(--spacing-2);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .mg-stack tbody tr:last-child {
+    border-bottom: 0;
+  }
+  /* Astryx のセルは省略表示のために max-width: 0 を持つので、積んだときは外す（外さないと幅 0 で何も見えない） */
+  /* 右寄せの列（進捗など）も積んだときは左端にそろえる（見出しの「進捗」だけ右にずれていた。Fable 11回目 W3） */
+  .mg-stack tbody td {
+    display: flex;
+    justify-content: flex-start;
+    align-items: baseline;
+    gap: var(--spacing-2);
+    text-align: start;
+    width: auto;
+    max-width: none;
+    padding: var(--spacing-1) 0;
+    text-wrap: pretty;
+    border: 0;
+  }
+  .mg-stack tbody td > * {
+    min-width: 0;
+  }
+  /* 見出しの幅は、その表で一番長い見出しの文字数（tableLabels() が --label-w で渡す）。見出しは途中で折り返さない */
+  /* 右寄せの列（進捗）はセルの text-align: end が Astryx 側で勝って見出しの箱の中に残るので、見出しで左寄せを指定する（2026-11-17 に測った: 箱は左端 48 でそろい、文字だけ右に寄っていた） */
+  .mg-stack tbody td::before {
+    flex: 0 0 var(--label-w, 4em);
+    text-align: start;
+    white-space: nowrap;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+  }
+  .mg-stack tbody td:nth-child(1)::before { content: var(--label-1); }
+  .mg-stack tbody td:nth-child(2)::before { content: var(--label-2); }
+  .mg-stack tbody td:nth-child(3)::before { content: var(--label-3); }
+  .mg-stack tbody td:nth-child(4)::before { content: var(--label-4); }
+  .mg-stack tbody td:nth-child(5)::before { content: var(--label-5); }
+  /* 業績目標: 同じ人の2行目からは名前のセルごと出さず、人と人の間だけに線を引く */
+  .mg-stack-goals tbody td:has(:is(.mg-person-cont, .mh-person-cont)) {
+    display: none;
+  }
+  .mg-stack-goals tbody tr:has(+ tr :is(.mg-person-cont, .mh-person-cont)) {
+    border-bottom-color: transparent;
+  }
+}
+
+/* ---------- アクションの人の並び ---------- */
+
+.mg-action-rows {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: var(--spacing-2) var(--spacing-3);
+  align-items: start;
+  justify-items: start;
+}
+
+/* ---------- 推移の線 ---------- */
+
+/* 左に縦の目盛り（0人・いちばん多い週の人数）、右に線。下の行（何週前・今期／前期・今週）は線の列にそろえる */
+.mg-trend-frame {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: var(--spacing-2);
+  row-gap: var(--spacing-1);
+}
+.mg-trend-axis {
+  position: relative;
+}
+.mg-trend-tick-size {
+  display: block;
+  visibility: hidden;
+}
+.mg-trend-tick {
+  position: absolute;
+  inset-inline-end: 0;
+  transform: translateY(-50%);
+  white-space: nowrap;
+}
+
+.mg-trend-wrap {
+  position: relative;
+  border-radius: var(--radius-element);
+  cursor: crosshair;
+  /* 指で横になぞると週を選ぶ（縦のスクロールは残す） */
+  touch-action: pan-y;
+}
+.mg-trend-wrap:focus-visible {
+  outline: var(--focus-outline-width) var(--focus-outline-style) var(--focus-outline-color);
+  outline-offset: var(--focus-outline-offset);
+}
+.mg-trend {
+  display: block;
+  width: 100%;
+  height: 128px;
+}
+/* 縦版の「次回までのアクション」だけ、右の列を左の列（アヤのひと言）の下端まで伸ばし、線をその高さいっぱいに描く。
+   線は viewBox を縦に伸ばして描くので、点と縦の線は % の位置のまま線に乗る。狭くて縦に積むときは 128 のまま */
+.mg-card-split.mg-fill {
+  align-items: stretch;
+}
+.mg-fill > .mg-detail > :last-child {
+  flex: 1 1 auto;
+}
+.mg-fill .mg-trend-frame {
+  grid-template-rows: auto minmax(0, 1fr) auto;
+}
+.mg-fill .mg-trend-wrap {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+.mg-fill .mg-trend {
+  flex: 1 1 0;
+  height: auto;
+  min-height: 128px;
+}
+/* 選んだ週の縦の線（線の上端 10 から下端 90 まで） */
+.mg-trend-guide {
+  position: absolute;
+  inset-block: 10% 10%;
+  width: 1px;
+  background: var(--color-border-emphasized);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.mg-trend-grid {
+  stroke: var(--color-border);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+/* 線の太さは枠の伸び縮みで変えない（preserveAspectRatio="none" で縦に伸ばすと、線も太って見える） */
+.mg-trend-prev,
+.mg-trend-now {
+  vector-effect: non-scaling-stroke;
+}
+.mg-trend-prev {
+  fill: none;
+  /* 前期の線は白地に対して 3:1 以上の濃さにする（この画面のテーマでは border-emphasized が #D4D4D4 で 1.5:1 だった。icon-secondary は #6A6A6A で 5.4:1） */
+  stroke: var(--color-icon-secondary);
+  /* 今期（2.5）より細くして、重さで今期と分ける */
+  stroke-width: 1.5;
+}
+.mg-trend-now {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 2.5;
+}
+.mg-trend-dot {
+  position: absolute;
+  width: var(--spacing-2);
+  height: var(--spacing-2);
+  /* 点の真ん中を週の位置に置く。吹き出しは点の箱に付くので、transform でなく margin でずらす（transform だと箱は動かず、吹き出しが点に重なる） */
+  margin-block-start: calc(var(--spacing-2) / -2);
+  margin-inline-start: calc(var(--spacing-2) / -2);
+  border-radius: var(--radius-full);
+  background: var(--color-accent);
+  pointer-events: none;
+}
+.mg-trend-dot-prev {
+  background: var(--color-icon-secondary);
+}
+/* 吹き出しを出す帯。線とは別の行に取り、吹き出しが線と点を隠さないようにする（Fable 7回目 R6）。
+   高さは吹き出し（2行）の高さに合わせる */
+.mg-trend-band {
+  position: relative;
+  height: var(--spacing-12);
+}
+/* 吹き出しを付けるだけの見えない点（帯の縦の真ん中、選んだ週の位置）。
+   visibility: hidden にすると、付いている吹き出しまで出なくなるので、塗りを外すだけにする */
+.mg-trend-tip-anchor {
+  background: none;
+}
+.mg-key {
+  display: inline-block;
+  width: var(--spacing-3);
+  height: 2px;
+  border-radius: var(--radius-full);
+}
+.mg-key-now {
+  background: var(--color-accent);
+}
+.mg-key-prev {
+  background: var(--color-icon-secondary);
+}
+
+/* ---------- 満足度の点の表（本物の table。横に入りきらないときは枠の中で横に送る） ---------- */
+
+/* マスどうしのすき間（border-spacing）は表の外側にも付くので、枠を左右にすき間の分だけ広げて、端のマスと見出しを右の列の端にそろえる（台紙 lib・tug）。
+   すき間は上司ホームの表が 2px、個人画面の帯（.mg-heat-strip）が --spacing-1 */
+.mg-heat-scroll {
+  --mg-heat-gap: 2px;
+  overflow: auto;
+  margin-inline: calc(-1 * var(--mg-heat-gap));
+  max-inline-size: calc(100% + 2 * var(--mg-heat-gap));
+}
+.mg-heat-scroll:has(.mg-heat-strip) {
+  --mg-heat-gap: var(--spacing-1);
+}
+/* 日付の列は「10/16」が入る幅より細くしない。見出しの文字は --font-size-sm で、幅は文字の大きさの約2.6倍なので、
+   すき間を足して 3.2 倍を列の最小にする（Astryx は狭い画面で文字を大きくするので、固定の px でなく文字の大きさから出す）。
+   カードが狭くて足りないときは、枠の中で横に送る（375px で日付の見出しが重なっていた。列の数は ScoreGrid が --mg-heat-cols で渡す） */
+.mg-heat {
+  /* 名前の列は「鈴木 美咲」（氏名4文字と空き）が1行に入る幅。Astryx は狭い画面で本文の文字を大きくするので、文字の大きさから出す */
+  --mg-heat-name-w: calc(var(--font-size-base) * 6);
+  width: 100%;
+  min-inline-size: calc(var(--mg-heat-cols, 1) * var(--font-size-sm) * 3.2);
+  border-collapse: separate;
+  border-spacing: var(--mg-heat-gap, 2px);
+  table-layout: fixed;
+}
+.mg-heat:has(.mg-heat-name-col) {
+  min-inline-size: calc(var(--mg-heat-name-w) + var(--mg-heat-cols, 1) * var(--font-size-sm) * 3.2);
+}
+.mg-heat th {
+  padding: 0;
+  font-weight: var(--font-weight-normal);
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+.mg-heat .mg-heat-name-col {
+  width: var(--mg-heat-name-w);
+}
+/* 横に送るときは、開いたときに最新の週（右端の列）まで送っておく（ガイド scroll-target-on-load「Apply `scroll-initial-target: nearest`」。
+   対応していないブラウザは ScoreGrid が scrollLeft で同じことをする）。幅が足りるときは送る量が 0 なので何も変わらない */
+.mg-heat-latest {
+  scroll-initial-target: nearest;
+}
+/* 横に送っても、名前の列の見出し（「名前」）は名前と一緒に左に残す */
+.mg-heat thead .mg-heat-name-head {
+  position: sticky;
+  inset-inline-start: 0;
+  /* 横に送ったマスより上に重ねる（重なりの順を決めないと、後に並ぶマスが名前を隠す。375px で名前が読めなかった） */
+  z-index: 1;
+  background: var(--color-background-card);
+}
+.mg-heat tbody th {
+  white-space: nowrap;
+  position: sticky;
+  inset-inline-start: 0;
+  z-index: 1;
+  text-align: start;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-base);
+  background: var(--color-background-card);
+}
+/* 名前の列がある表だけ、先頭の見出し（名前）を左に寄せる。名前の列が無い帯では先頭も日付なので中央のまま */
+.mg-heat:not(.mg-heat-strip) thead th:first-child {
+  text-align: start;
+}
+.mg-heat td {
+  padding: 0;
+}
+.mg-heat-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* 文字が入る箱は高さを固定せず、最小の高さだけ決める（文字を大きくしても切れない） */
+  min-block-size: var(--spacing-8);
+  border-radius: var(--radius-element);
+  font-size: var(--font-size-sm);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-primary);
+}
+/* 赤い週以外のマス。点によらず同じ灰色（Fable 7回目 13・N9・M3） */
+.mg-heat-s2 {
+  background: var(--color-background-gray);
+}
+.mg-heat-low {
+  background: var(--color-error);
+  color: var(--color-on-error);
+  font-weight: var(--font-weight-semibold);
+}
+/* 表の下の1行（赤いマスの意味）。台紙 fun・lib・tug の Heat Legend: 赤の小さな四角＋補足の文字 */
+.mg-heat-legend {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+.mg-heat-legend-swatch {
+  flex-shrink: 0;
+  inline-size: var(--spacing-3);
+  block-size: var(--spacing-3);
+  border-radius: var(--radius-inner);
+  background: var(--color-error);
+}
+/* ポインタが乗っているマスと、その行の名前・その列の日付 */
+.mg-heat .mg-heat-pointed {
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-semibold);
+}
+.mg-heat-cell[data-pointed] {
+  /* 線は 1px だけ（DESIGN.md 177行） */
+  outline: 1px solid var(--color-text-primary);
+  outline-offset: 1px;
+}
+
+/* ---------- キャリアの3つの区分け ---------- */
+
+/* 3つの区分けは横に並べ、1マスの幅（64px）が取れない幅（375px の画面など）では区分けごと次の行に送る。
+   マスの数は --mg-seg-count で受け取る（CareerSplit） */
+.mg-split {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--spacing-3);
+}
+/* 区分けの名前（「未確認 1人」など）は折り返さない。区分けの最小幅は、名前とマスの並びの広い方になる */
+.mg-split-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+.mg-split-group > :first-child {
+  white-space: nowrap;
+}
+.mg-split-bar {
+  display: flex;
+  gap: var(--spacing-1);
+  min-block-size: var(--spacing-8);
+  min-width: calc(var(--mg-seg-count, 1) * (var(--spacing-12) + var(--spacing-4)) + (var(--mg-seg-count, 1) - 1) * var(--spacing-1));
+}
+.mg-split-seg {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: var(--spacing-8);
+  border-radius: var(--radius-element);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}
+.mg-split-done {
+  background: var(--color-background-green);
+  color: var(--color-text-green);
+}
+/* 未反映の名前の札は赤くしない。状態は上の「未反映 4人」と表のタグ（Badge error）で出す。未確認より濃い灰色 */
+.mg-split-alert {
+  background: var(--color-background-gray);
+}
+.mg-split-open {
+  background: var(--color-background-gray);
+}
+.mg-split-unknown {
+  background: var(--color-neutral);
+  color: var(--color-text-secondary);
+}
+/* 帯のマスか表の行に触れている人（usePointedPerson）。マスは輪郭、表は行の地 */
+/* 輪郭はマスの内側に引く（外に出すと、上の区分けの名前と下の表に上下が隠れていた） */
+.mg-split-seg[data-pointed] {
+  /* 線は 1px だけ（DESIGN.md 177行） */
+  outline: 1px solid var(--color-text-primary);
+  outline-offset: -1px;
+}
+.mg-table tbody tr:has([data-pointed]) {
+  background: var(--color-overlay-hover);
+}
+
+/* ---------- 話題の順位 ---------- */
+
+.mg-topic-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  padding-block: var(--spacing-2);
+  border-bottom: 1px solid var(--color-border);
+}
+.mg-topic-rank {
+  flex: 0 0 var(--spacing-4);
+}
+.mg-topic-label {
+  flex: 1 1 0;
+  min-width: 0;
+}
+/* 話題は短い見出しなので、文節の切れ目で行の長さをそろえて折り返す（375 幅で「移動が多く時間がな／い」になっていた。
+   ガイド typography「Use `text-wrap: balance` for balanced headlines and headline-like content」）。
+   行の折り方は行を持つ箱（.mg-topic-label）が決め、word-break は Astryx の Text が自分で持つので文の要素そのものに当てる */
+.mg-topic-label {
+  text-wrap: balance;
+}
+.mg-topic-label > * {
+  word-break: auto-phrase;
+}
+.mg-topic-count {
+  flex: 0 0 var(--spacing-12);
+  text-align: end;
+}
+/* 増減の列は「+12」の札（幅 36.5px）が収まる幅にする。32px だと札がはみ出し、その行だけ回数が左にずれた（Fable 13回目 Y2） */
+.mg-topic-delta {
+  flex: 0 0 var(--spacing-10);
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ---------- 本人聞き取り（山田 拓也さん） ---------- */
+
+.mg-hearing {
+  container: mg-hearing / inline-size;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+/* 1件ごとに上に線、列は 出典 176・点 40・発言の残り（台紙の Interview Row） */
+.mg-hearing-row {
+  display: grid;
+  grid-template-columns: 176px 40px minmax(0, 1fr);
+  column-gap: var(--spacing-4);
+  align-items: center;
+  padding-block: var(--spacing-2);
+  border-top: 1px solid var(--color-border);
+}
+/* 発言は1文字だけの行を作らない（ガイド typography「Use `text-wrap: pretty` for long-form body text」） */
+.mg-hearing-row > :last-child {
+  text-wrap: pretty;
+}
+/* 一覧が狭い（480px 未満）ときは、出典と点を1行目に並べ、発言を2行目に幅いっぱいで出す */
+@container mg-hearing (width < 480px) {
+  .mg-hearing-row {
+    grid-template-columns: max-content minmax(0, 1fr);
+    row-gap: var(--spacing-1);
+  }
+  .mg-hearing-row > :last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+/* 1人分の点の帯は、マスの間を 4 にする（台紙の Satisfaction Heat の g1） */
+.mg-heat-strip {
+  border-spacing: var(--mg-heat-gap, var(--spacing-1));
+}
+
+/* ---------- 頼む欄 ---------- */
+
+.mg-ask {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+.mg-ask-input {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* ---------- チャットの欄 ---------- */
+
+.mg-chat {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+/* 本文がチャットの横に収まらない幅（Astryx の区切り lg 1024px より下。768〜1023 はサイドバー 240 とチャット 360 で本文が 168 まで潰れる）では、
+   チャットを本文の幅いっぱいに広げ、本文は隠す。チャットの「閉じる」で本文に戻る。768px 未満は Astryx の AppShell がサイドバーを畳むのでチャットだけになる */
+@media (width < 1024px) {
+  .mg-chat-page {
+    display: none;
+  }
+  .mg-chat-panel.mg-chat-panel {
+    flex: 1 1 auto;
+    width: auto;
+  }
+}
+.mg-chat-head {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-4);
+  border-bottom: 1px solid var(--color-border);
+}
+/* 会話の内側の余白 16 は ChatMessageList が自分で持つので、ここでは足さない（足すと頭・入力欄より 16 内側に入る。台紙 fun は同じ左右の端） */
+.mg-chat-log {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+/* ChatMessageList とその内側は欄の高さに縮むので、会話が欄より長いと内側の下の余白 16 が中身の後ろに残らず、
+   最後の吹き出しが入力欄の線に接していた（1440×900 で 0px）。縮ませずに中身の高さまで伸ばし、下にも 16 を残す */
+.mg-chat-log > * {
+  flex: 1 0 auto;
+}
+.mg-chat-log > * > * {
+  flex-shrink: 0;
+}
+/* 開いたときは会話の頭（最初の吹き出し）から見せるので、最後の発言まで送らない（本人の回答「会話の頭から見せる」2026-11-16） */
+.mg-chat-quotes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  width: 100%;
+  padding-block-start: var(--spacing-2);
+}
+.mg-chat-quote {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  padding: var(--spacing-2) var(--spacing-3);
+  background: var(--color-background-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-element);
+}
+.mg-chat-foot {
+  padding: var(--spacing-3) var(--spacing-4);
+  border-top: 1px solid var(--color-border);
+}
+
+/* ---------- スクロールバー ---------- */
+
+/* 本文と会話の欄が並ぶ画面で、常に出る設定でもスクロールバーが2本の太い線にならないよう、細く薄くする（台紙にスクロールバーは無い） */
+.astryx-layout-content,
+.mg-chat-log {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-emphasized) transparent;
+}
+
+/* ---------- フィード ---------- */
+
+.mg-feed {
+  width: 100%;
+  max-width: 720px;
+}
+/* 題と一覧を幅 720 の1本の列にして、本文の中央に置く（台紙 net。左に寄せると右に本文の4割ほどの空白が残る） */
+.mg-feed-page > * {
+  max-width: 720px;
+  margin-inline: auto;
+}
+/* 日付ごとの一言の並び（ul の既定の余白と点を外し、間は 16） */
+.mg-feed-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+/* ---------- ページの余白（台紙: 上 16・左右 24・下 32） ---------- */
+
+.mg-page {
+  padding: var(--spacing-4) var(--spacing-6) var(--spacing-8);
+}
+
+/* ---------- 話題の順位の並び（ol の既定の余白と番号を外す） ---------- */
+
+.mg-topics {
+  container: mg-topics / inline-size;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+/* 一覧が狭い（480px 未満）ときは、横版の話題のカード（ListItem の endContent）と同じく、番号・回数・増減を中身の幅に詰めて話題に幅を回す。
+   375 幅で回数と増減の列を固定幅にしていたため話題が 136px しか取れず「任される範囲が／広がった」と折れていた（横版は 188px で1行）。
+   回数は増減の左に右詰めで並ぶので、行をまたいでも数字の右端はそろう */
+@container mg-topics (width < 480px) {
+  .mg-topic-row {
+    gap: var(--spacing-2);
+  }
+  .mg-topic-rank,
+  .mg-topic-count {
+    flex: 0 0 auto;
+  }
+  .mg-topic-delta {
+    flex: 0 0 auto;
+    min-width: var(--spacing-6);
+  }
+}
+/* 広い画面（1024px 以上）のチャットの話題も、増減の列を「+12」の札の幅にそろえ、回数の右端を全行でそろえる（Fable 13回目 Y2）。
+   375px は X2 の1行を守るため 24px のまま */
+@media (width >= 1024px) {
+  @container mg-topics (width < 480px) {
+    .mg-topic-delta {
+      min-width: var(--spacing-10);
+    }
+  }
+}
+
+/* チャットの頭の閉じるボタンを右端に寄せる */
+.mg-chat-head-end {
+  margin-inline-start: auto;
+}
+
+/* 表の短い文は文節の切れ目で折り返す（「か／ら」のような語の途中の折れを防ぐ。対応していないブラウザでは無視される）。
+   Astryx の Text が word-break を自分で持つので、文の要素そのものに当てる */
+.mg-table .mg-phrase,
+.mh-table .mg-phrase {
+  word-break: auto-phrase;
+  text-wrap: pretty;
+}
+/* 吹き出しの長い文は文字の切れ目で折り返し、左に寄せる（文節で折ると右がでこぼこになり、狭い画面で行が増えた。Fable a562 20）。
+   line-break は normal にする。strict は「やっ」の「っ」を行頭に置けず、「増えてきて、／やっと…」と句切れで折れて右に2字の空きを残した（Fable 10回目 V4）。
+   句読点と閉じかっこは normal でも行頭に来ない。両端そろえは、名前と「さん」を離さないために空いた行（最大3.5字）の字間を広げてしまうので使わない（2026-11-17 に全吹き出しを測った）。
+   pretty は最後の行が「す。」の2字だけになるのを防ぐ */
+.mg-aya-body .mg-phrase,
+.mg-chat-log .mg-phrase {
+  word-break: normal;
+  line-break: normal;
+  text-wrap: pretty;
+}
+/* 文の中の姓名と日付は行の途中で割らない（Phrase） */
+.mg-keep {
+  white-space: nowrap;
+}
+/* 吹き出しでは塊（.mg-keep）ごと送ると行末に3〜4字の空きが残るので、塊の中の小さな単位（姓・「さん」・数字と単位）だけ離さない。
+   それ以外は文字単位で折る（Fable 9回目 U3） */
+.mg-aya-body .mg-keep,
+.mg-chat-log .mg-keep,
+.mg-glue-only .mg-keep {
+  white-space: normal;
+}
+.mg-glue {
+  white-space: nowrap;
+}
+
+/* 見出しと表の見出しは行の長さをそろえて折り返す（ガイド typography「Use `text-wrap: balance` for balanced headlines and headline-like content (e.g. `<th>`)」）。
+   全要素（*）には当てない（同「DO NOT apply it on `*`」） */
+.mg-page :is(h1, h2, h3, h4),
+.mg-table th {
+  text-wrap: balance;
+}
+
+/* ---------- グラフが現れるときの動き（動きを減らす設定の人には付けない） ---------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  /* 推移の線は左から引く（前期と今期を同時に。今期だけ遅らせると、前期の線だけが見える間ができる。Fable 6回目 R5）。終わりの点は線を引き終えてから出す。
+     線の太さを枠の伸び縮みで変えない設定（non-scaling-stroke）と点線の長さで引く作りは合わず、線が途中で止まったので、左から順に見せる作りにする。
+     引き終えたら切り抜きを外す（backwards）ので、線の端が欠けない */
+  .mg-trend-prev,
+  .mg-trend-now {
+    animation: mg-draw var(--duration-slow) var(--ease-standard) backwards;
+  }
+  .mg-trend-dot-end {
+    animation: mg-fade-in var(--duration-medium) var(--ease-entrance) both;
+    animation-delay: var(--duration-slow);
+  }
+  .mg-trend-dot {
+    transition: left var(--duration-fast) var(--ease-move), top var(--duration-fast) var(--ease-move);
+  }
+  /* 点の表は古い週から順に現れる */
+  .mg-heat-cell {
+    animation: mg-fade-in var(--duration-medium) var(--ease-entrance) both;
+    animation-delay: calc(var(--mg-col, 0) * var(--duration-fast) / 4);
+  }
+  /* 反映の帯は左から伸びる */
+  .mg-split-bar,
+  .mh-split-bar {
+    animation: mg-reveal-x var(--duration-slow) var(--ease-entrance) both;
+  }
+  .mg-table tbody tr {
+    transition: background-color var(--duration-fast) var(--ease-standard);
+  }
+}
+@keyframes mg-draw {
+  /* 上下と左は線の太さの分だけ外まで残し、右から見せていく */
+  from {
+    clip-path: inset(calc(var(--spacing-2) * -1) 100% calc(var(--spacing-2) * -1) calc(var(--spacing-2) * -1));
+  }
+  to {
+    clip-path: inset(calc(var(--spacing-2) * -1));
+  }
+}
+@keyframes mg-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes mg-reveal-x {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* チャットを開いた話題のカード（節の最初のカードなら節）を送るとき、上に区画の余白を残す */
+[data-chat-topic],
+.mg-page section {
+  scroll-margin-block-start: var(--spacing-6);
+}
